@@ -1,105 +1,106 @@
-Stroke Prediction Model
-Overview
-This project implements a machine learning model to predict the likelihood of stroke occurrence based on patient data. The model uses a combination of preprocessing techniques, oversampling, and a Linear Discriminant Analysis (LDA) classifier to achieve robust predictions. The pipeline is designed to handle both numerical and categorical features, address missing values, and mitigate class imbalance in the dataset.
-Dataset
-The dataset used is stroke-data.csv, which contains patient information relevant to stroke prediction. The dataset includes the following features:
+Stroke Prediction Model 🩺
 
-Categorical Features:
-hypertension: Whether the patient has hypertension (0 or 1).
-heart_disease: Whether the patient has heart disease (0 or 1).
-ever_married: Marital status (Yes/No).
-work_type: Type of occupation (e.g., Private, Self-employed).
-Residence_type: Urban or rural residence.
-smoking_status: Smoking habits (e.g., never smoked, smokes).
+📖 Overview
+This project develops a machine learning model to predict stroke likelihood using patient data. Built with a robust pipeline, it handles numerical and categorical features, addresses missing values, and mitigates class imbalance. The model employs Linear Discriminant Analysis (LDA) for classification, delivering reliable predictions.
 
+📊 Dataset
+The model is trained on stroke-data.csv, containing patient attributes relevant to stroke prediction. Key features include:
+Features
 
-Numerical Features:
-avg_glucose_level: Average glucose level in blood.
-bmi: Body Mass Index.
-age: Age of the patient.
+Categorical:
+hypertension: Presence of hypertension (0 or 1)
+heart_disease: Presence of heart disease (0 or 1)
+ever_married: Marital status (Yes/No)
+work_type: Occupation type (e.g., Private, Self-employed)
+Residence_type: Urban or Rural
+smoking_status: Smoking habits (e.g., never smoked, smokes)
 
 
-Target Variable:
-stroke: Whether the patient had a stroke (0 or 1).
+Numerical:
+avg_glucose_level: Average blood glucose level
+bmi: Body Mass Index
+age: Patient age
 
 
-Dropped Feature:
-id: Unique identifier for each patient, removed as it is not relevant for prediction.
+Target:
+stroke: Stroke occurrence (0 or 1)
+
+
+Dropped:
+id: Unique patient identifier (not used for prediction)
 
 
 
-The dataset is loaded using the load_data() function, which separates features (X), target (y), and identifies categorical and numerical columns for preprocessing.
-Model Pipeline
-The model is implemented using a scikit-learn Pipeline to streamline preprocessing and classification. The pipeline consists of the following steps:
+The load_data() function loads the dataset, separates features (X) and target (y), and identifies feature types for preprocessing.
+
+🛠️ Model Pipeline
+The model is implemented using a scikit-learn Pipeline for streamlined preprocessing and classification:
 
 ColumnTransformer:
-Numerical Features:
-Missing values are imputed using the median strategy (SimpleImputer(strategy='median')).
-
-
-Categorical Features:
-Encoded using one-hot encoding (OneHotEncoder(handle_unknown='ignore')) to handle categorical variables and accommodate unseen categories in future data.
-
-
+Numerical: Imputes missing values with median (SimpleImputer(strategy='median')).
+Categorical: Applies one-hot encoding (OneHotEncoder(handle_unknown='ignore')) to handle unseen categories.
 
 
 PowerTransformer:
-Applies the Yeo-Johnson transformation to numerical features to make them more Gaussian-like, improving model performance. Standardization is included (standardize=True).
+Uses Yeo-Johnson transformation to normalize numerical features (standardize=True).
 
 
 SMOTE:
-Synthetic Minority Oversampling Technique (SMOTE) is used to address class imbalance in the dataset by generating synthetic samples for the minority class (stroke cases).
+Addresses class imbalance by generating synthetic samples for the minority class (stroke cases).
 
 
 Linear Discriminant Analysis (LDA):
-The classifier used for predicting stroke likelihood. LDA is chosen for its ability to find linear combinations of features that best separate classes.
+Classifies patients based on feature combinations optimized for class separation.
 
 
 
-Model Evaluation
+
+📈 Model Evaluation
 The model is evaluated using Repeated Stratified K-Fold Cross-Validation:
 
-Configuration: 10 folds, repeated 3 times (RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=42)).
-Metric: Area Under the Receiver Operating Characteristic Curve (ROC AUC), which is suitable for imbalanced classification tasks.
-Results Visualization: A boxplot is generated to visualize the distribution of ROC AUC scores across cross-validation folds, with the mean score highlighted.
+Setup: 10 folds, 3 repeats (RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=42)).
+Metric: ROC AUC, ideal for imbalanced datasets.
+Visualization: A boxplot displays the distribution of ROC AUC scores, with the mean score highlighted.
 
-The evaluation is performed using the evaluate_model() function, which returns an array of ROC AUC scores. The mean and standard deviation of these scores can be computed to assess model performance (commented in the code).
-Model Training and Saving
-After evaluation, the pipeline is fitted on the entire dataset to create the final model. The trained model is saved as a joblib file (stroke_prediction_model.joblib) for future use, such as deployment or further analysis.
-Dependencies
-The following Python libraries are required to run the code:
+The evaluate_model() function computes cross-validation scores, providing insights into model performance.
 
-pandas: For data manipulation and loading the dataset.
-numpy: For numerical operations.
-scikit-learn: For machine learning components (LinearDiscriminantAnalysis, Pipeline, ColumnTransformer, OneHotEncoder, PowerTransformer, SimpleImputer, RepeatedStratifiedKFold, cross_val_score).
-imblearn: For handling class imbalance (SMOTE, Pipeline).
-joblib: For saving the trained model.
-matplotlib: For visualizing evaluation results.
+💾 Model Training & Saving
+The pipeline is trained on the entire dataset and saved as stroke_prediction_model.joblib for future use, such as predictions or deployment.
 
-Install the dependencies using:
+🧰 Dependencies
+The following libraries are required:
+
+pandas: Data manipulation
+numpy: Numerical operations
+scikit-learn: Machine learning components
+imblearn: Class imbalance handling
+joblib: Model persistence
+matplotlib: Visualization
+
+Install them with:
 pip install pandas numpy scikit-learn imblearn joblib matplotlib
 
-Usage
-To train and evaluate the model, follow these steps:
 
-Ensure the stroke-data.csv file is in the same directory as the script.
-Run the Python script containing the provided code.
-The script will:
-Load and preprocess the data.
-Evaluate the model using cross-validation and display a boxplot of ROC AUC scores.
-Train the final model on the entire dataset.
-Save the trained model as stroke_prediction_model.joblib.
+🚀 Usage
+Training the Model
 
+Place stroke-data.csv in the project directory.
+Run the script to:
+Load and preprocess data
+Evaluate the model (view ROC AUC boxplot)
+Train and save the final model (stroke_prediction_model.joblib)
 
 
-To use the saved model for predictions:
+
+Making Predictions
+Use the saved model for new predictions:
 from joblib import load
 import pandas as pd
 
 # Load the model
 model = load('stroke_prediction_model.joblib')
 
-# Prepare new data (same format as training data, excluding 'id' and 'stroke')
+# Example new data
 new_data = pd.DataFrame({
     'age': [45],
     'hypertension': [0],
@@ -112,23 +113,27 @@ new_data = pd.DataFrame({
     'smoking_status': ['never smoked']
 })
 
-# Make predictions
+# Predict
 prediction = model.predict(new_data)
-probability = model.predict_proba(new_data)[:, 1]  # Probability of stroke
+probability = model.predict_proba(new_data)[:, 1]
 print(f"Prediction: {'Stroke' if prediction[0] == 1 else 'No Stroke'}")
 print(f"Stroke Probability: {probability[0]:.3f}")
 
-Results
-The model's performance is assessed through the ROC AUC scores obtained from cross-validation. The boxplot provides a visual representation of the score distribution, helping to understand the model's consistency. The mean ROC AUC score indicates the model's ability to distinguish between stroke and non-stroke cases, while the standard deviation reflects the variability across folds.
-Future Improvements
 
-Feature Engineering: Explore additional features or interactions between features to improve model performance.
-Hyperparameter Tuning: Perform grid search or random search to optimize LDA parameters or try other classifiers (e.g., Random Forest, XGBoost).
-Alternative Oversampling: Experiment with other oversampling techniques (e.g., ADASYN) or combine oversampling with undersampling.
-Data Quality: Investigate and address potential data quality issues, such as outliers or inconsistent categorical values.
-Deployment: Deploy the model as a web service using frameworks like Flask or FastAPI for real-time predictions.
+📉 Results
+The model's ROC AUC scores from cross-validation are visualized in a boxplot, showing performance consistency. The mean ROC AUC reflects the model's ability to distinguish stroke cases, with the standard deviation indicating variability.
 
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
-Contact
-For questions or contributions, please contact [Your Name] at [Your Email].
+🔮 Future Improvements
+
+Feature Engineering: Add derived features or interactions.
+Hyperparameter Tuning: Optimize LDA or test other classifiers (e.g., XGBoost).
+Oversampling Alternatives: Explore ADASYN or combined sampling methods.
+Data Quality: Address outliers or inconsistent values.
+Deployment: Create a web API with Flask or FastAPI.
+
+
+📜 License
+This project is licensed under the MIT License.
+
+📬 Contact
+For questions or contributions, reach out to [Your Name] at [Your Email].
